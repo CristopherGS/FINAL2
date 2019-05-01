@@ -7,12 +7,14 @@ import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.table.DefaultTableModel;
-
+import liga.Lista;
 
 public class ConfigEquipos extends javax.swing.JFrame {
 
     Lista list = new Lista();
     public int contGlobal = 0;
+    private Lista lista_eqp1, lista_partidos;
+    private Nodo auxiiar;
     
     public ConfigEquipos() {
         initComponents();
@@ -23,29 +25,46 @@ public class ConfigEquipos extends javax.swing.JFrame {
 
     }
     public void ingresar(){
-        String cant = cantequipos.getText();
-        int entero = Integer.parseInt(cant);
-        for (int i = 0; i <= entero; i++) {
-            
-            if (entero != 0) {
             int cont = 1; 
-            mostrar.setText("Ingrese Nuevo Dato");
+        for (int i = 1; i <=contGlobal+1; i++) {
+            if (contGlobal != 0) {
             Equipo nuevo_equipo = new Equipo();
-                nuevo_equipo.setNombre(textequipo.getText());
+                String nombre_eqp = JOptionPane.showInputDialog(null, "Ingrese el nombre del equipo "+cont);
+                nuevo_equipo.setNombre(nombre_eqp);
                 Nodo nuevo_nodo = new Nodo();
                 nuevo_nodo.setEquipo(nuevo_equipo);
                 list.InsertarFondo(nuevo_nodo);    
                 cont++;
-                contGlobal++;
-               
-        }
-        else{
-            JOptionPane.showMessageDialog(null,"Aun no se ha ingresado la cantidad de equipos","Error",JOptionPane.ERROR_MESSAGE);
+                
         }
         }
         mostrar.setText("FINALIZADO");
         
     }
+   
+    public void generarPartidos(){
+        Nodo aux = lista_eqp1.getTope(), aux2;
+        while(aux!=null){
+            aux2 = aux.getSig();
+            while(aux2!=null){
+                Partido nuevo_partido = new Partido();
+                nuevo_partido.setEqp1(aux);
+                nuevo_partido.setEqp2(aux2);
+                Nodo nodo_partido = new Nodo();
+                nodo_partido.setPartido(nuevo_partido);
+                lista_partidos.InsertarFondo(nodo_partido);
+                aux2 = aux2.getSig();
+                
+                
+            }
+            aux = aux.getSig();
+            
+        }
+        auxiiar = lista_partidos.getTope();
+     JOptionPane.showMessageDialog(null,"Ya se han generado los partidos","Error",JOptionPane.ERROR_MESSAGE); 
+        
+    }
+    
     public void setfondo(){
          ((JPanel)getContentPane()).setOpaque(false); ImageIcon uno=new ImageIcon(this.getClass().getResource("/imagenes/fondo.jpg")); JLabel fondo= new JLabel(); fondo.setIcon(uno); getLayeredPane().add(fondo,JLayeredPane.FRAME_CONTENT_LAYER); fondo.setBounds(0,0,uno.getIconWidth(),uno.getIconHeight());
     }
@@ -55,12 +74,11 @@ public class ConfigEquipos extends javax.swing.JFrame {
     private void initComponents() {
 
         jButton1 = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
-        textequipo = new javax.swing.JTextField();
-        jLabel2 = new javax.swing.JLabel();
         mostrar = new javax.swing.JLabel();
-        cantequipos = new javax.swing.JTextField();
-        guardar = new javax.swing.JButton();
+        INGRESAR = new javax.swing.JButton();
+        INGRESAR1 = new javax.swing.JButton();
+        INGRESAR2 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -72,29 +90,35 @@ public class ConfigEquipos extends javax.swing.JFrame {
             }
         });
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        jLabel1.setText("INGRESE NOMBRE DEL EQUIPO");
-
-        textequipo.addActionListener(new java.awt.event.ActionListener() {
+        INGRESAR.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        INGRESAR.setText("Configurar “Cantidad de equipos”");
+        INGRESAR.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                textequipoActionPerformed(evt);
+                INGRESARActionPerformed(evt);
             }
         });
 
-        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        jLabel2.setText("CUANTOS EQUIPOS INGRESARA:");
-
-        cantequipos.addActionListener(new java.awt.event.ActionListener() {
+        INGRESAR1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        INGRESAR1.setText("GENERAR PARTIDOS");
+        INGRESAR1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cantequiposActionPerformed(evt);
+                INGRESAR1ActionPerformed(evt);
             }
         });
 
-        guardar.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        guardar.setText("GUARDAR");
-        guardar.addActionListener(new java.awt.event.ActionListener() {
+        INGRESAR2.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        INGRESAR2.setText("Puntos asignados");
+        INGRESAR2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                guardarActionPerformed(evt);
+                INGRESAR2ActionPerformed(evt);
+            }
+        });
+
+        jButton2.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jButton2.setText("Otros");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
             }
         });
 
@@ -102,59 +126,50 @@ public class ConfigEquipos extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(84, Short.MAX_VALUE)
-                .addComponent(guardar, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(30, 30, 30)
-                .addComponent(jButton1)
-                .addGap(46, 46, 46))
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(textequipo)
-                        .addGap(18, 18, 18))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(mostrar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addContainerGap())
+                    .addComponent(INGRESAR2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(INGRESAR, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(mostrar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cantequipos, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(11, 11, 11)
+                        .addComponent(INGRESAR1, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
+                .addGap(135, 135, 135)
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(15, 15, 15)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(cantequipos, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(textequipo, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(13, 13, 13)
-                .addComponent(mostrar, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(guardar, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+                    .addComponent(INGRESAR1, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(INGRESAR, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(24, 24, 24)
+                        .addComponent(mostrar, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(INGRESAR2, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void textequipoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textequipoActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_textequipoActionPerformed
-
-    private void cantequiposActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cantequiposActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_cantequiposActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         Ventana abrir = new Ventana();
@@ -162,10 +177,31 @@ public class ConfigEquipos extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void guardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guardarActionPerformed
+    private void INGRESARActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_INGRESARActionPerformed
+        contGlobal = Integer.parseInt(JOptionPane.showInputDialog("Ingrese cuantos equipos quiere en la liga"));
+        if (contGlobal != 0 ) {
+            ingresar();
+        } else {
+            JOptionPane.showMessageDialog(null,"El Numero 0 no es valido..","Error",JOptionPane.ERROR_MESSAGE);
+        }
+            
+    }//GEN-LAST:event_INGRESARActionPerformed
 
-        ingresar();
-    }//GEN-LAST:event_guardarActionPerformed
+    private void INGRESAR1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_INGRESAR1ActionPerformed
+        if (list.Vacia()) {
+            JOptionPane.showMessageDialog(null,"No se han ingresado aun los equipos","Error",JOptionPane.ERROR_MESSAGE);
+        } else {
+            generarPartidos();
+        }
+    }//GEN-LAST:event_INGRESAR1ActionPerformed
+
+    private void INGRESAR2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_INGRESAR2ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_INGRESAR2ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -203,12 +239,11 @@ public class ConfigEquipos extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextField cantequipos;
-    private javax.swing.JButton guardar;
+    private javax.swing.JButton INGRESAR;
+    private javax.swing.JButton INGRESAR1;
+    private javax.swing.JButton INGRESAR2;
     private javax.swing.JButton jButton1;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
+    private javax.swing.JButton jButton2;
     public javax.swing.JLabel mostrar;
-    private javax.swing.JTextField textequipo;
     // End of variables declaration//GEN-END:variables
 }
